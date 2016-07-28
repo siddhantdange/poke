@@ -26,8 +26,8 @@ COORDS_LONGITUDE = 0
 COORDS_ALTITUDE = 0
 
 #https://github.com/tejado
-def start_work(access_token,ltype,loc):
-	set_location(loc)
+def start_work(access_token,ltype, lat, lon, alt):
+	set_location_coords(lat, lon, alt)
 	print '[+] Token:',access_token[:40]+'...'
 	api_endpoint =get_api_endpoint(access_token,ltype)
 	if api_endpoint is not None:
@@ -61,17 +61,6 @@ def f2h(float):
 
 def h2f(hex):
   return struct.unpack('<d', struct.pack('<Q', int(hex,16)))[0]
-
-def set_location(location_name):
-	try:
-		geolocator = GoogleV3()
-		loc = geolocator.geocode(location_name)
-		print('[!] Your given location: {}'.format(loc.address.encode('utf-8')))
-		print('[!] lat/long/alt: {} {} {}'.format(loc.latitude, loc.longitude, loc.altitude))
-		set_location_coords(loc.latitude, loc.longitude, loc.altitude)
-	except:
-		print '[-] error in set_location'
-		set_location(location_name)
 
 def set_location_coords(lat, long, alt):
 	global COORDS_LATITUDE, COORDS_LONGITUDE, COORDS_ALTITUDE

@@ -11,7 +11,9 @@ Success=True
 
 aT = None
 lT = None
-locat = None
+LAT = None
+LON = None
+ALT = None
 K = 0
 
 def getLocation():
@@ -31,8 +33,8 @@ def getLocation():
 	print "Changing location...",K
 	return arr[ K ]
 
-def start_private_show(access_token,ltype,loc):
-	location.set_location(getLocation())
+def start_private_show(access_token,ltype,lat,lon,alt):
+	location.set_location_coords(lat,lon,alt)
 	print '[+] Token:',access_token[:40]+'...'
 	prot1=logic.gen_first_data(access_token,ltype)
 	local_ses=api.get_rpc_server(access_token,prot1)
@@ -43,11 +45,13 @@ def start_private_show(access_token,ltype,loc):
 	global aT
 	aT = access_token
 	lT = ltype
-	locat = loc
+	LAT = lat
+	LON = lon
+	ALT = alt
 
 	while(Success):
 		work_stop(local_ses,new_rcp_point)
-	
+
 def walk_random():
 	COORDS_LATITUDE, COORDS_LONGITUDE, COORDS_ALTITUDE=location.get_location_coords()
 	COORDS_LATITUDE=location.l2f(COORDS_LATITUDE)
@@ -56,17 +60,17 @@ def walk_random():
 	COORDS_LATITUDE=COORDS_LATITUDE+config.steps
 	COORDS_LONGITUDE=COORDS_LONGITUDE+config.steps
 	location.set_location_coords(COORDS_LATITUDE, COORDS_LONGITUDE, COORDS_ALTITUDE)
-	
+
 def split_list(a_list):
 	half = len(a_list)/2
 	return a_list[:half], a_list[half:]
-	
+
 def work_half_list(part,local_ses,new_rcp_point):
 	for t in part:
 		if config.debug:
 			print '[!] farming pokestop..'
 		work_with_stops(t,local_ses.ses,new_rcp_point)
-	
+
 def work_stop(local_ses,new_rcp_point):
 	proto_all=logic.all_stops(local_ses)
 	all_stops=api.use_api(new_rcp_point,proto_all)
@@ -82,7 +86,7 @@ def work_stop(local_ses,new_rcp_point):
 		print '[+] found: %s Pokestops near'%(len(data_list))
 		if len(data_list) <= 1:
 			Success = False
-			return start_private_show(aT, lT, locat)
+			return start_private_show(aT, lT, LAT, LON, ALT)
 
 		if local_ses is not None and data_list is not None:
 			print '[+] starting show'
@@ -103,7 +107,7 @@ def work_stop(local_ses,new_rcp_point):
 	else:
 		walk_random()
 		work_stop(local_ses,new_rcp_point)
-		
+
 def work_with_stops(current_stop,ses,new_rcp_point):
 	Kinder= logic.gen_stop_data(ses,current_stop)
 	tmp_api=api.use_api(new_rcp_point,Kinder)

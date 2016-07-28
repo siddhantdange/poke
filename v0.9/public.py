@@ -66,7 +66,7 @@ def set_location(location_name):
 	try:
 		geolocator = GoogleV3()
 		loc = geolocator.geocode(location_name)
-		print('[!] Your given location: {}'.format(loc.address.encode('utf-8')))
+		print('[!] Your given locationasdfasd: {}'.format(loc.address.encode('utf-8')))
 		print('[!] lat/long/alt: {} {} {}'.format(loc.latitude, loc.longitude, loc.altitude))
 		set_location_coords(loc.latitude, loc.longitude, loc.altitude)
 	except:
